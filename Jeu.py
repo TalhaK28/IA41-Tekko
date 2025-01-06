@@ -1,7 +1,9 @@
 import pygame
 import sys
-from AI import ai_easy, ai_hard_minmax, check_victory, \
-    ai_hard_minmax  # Assurez-vous d'importer ai_move et check_victory depuis ai.py
+from Check_victory import check_victory
+from Easy_ia import ai_greedy
+from MinMax import ai_minmax
+from Alphabeta import ai_alphabeta
 from Menu import TeekoMenu
 
 # Paramètres globaux
@@ -296,44 +298,39 @@ class TeekoGamePygame:
         print("C'est au tour de l'IA...")
         player_symbol = 'O'
 
-        # Vérifiez si le mode est 'hard' ou 'easy'
+        # Vérifiez si le mode est 'hard', 'medium' ou 'easy'
         if self.difficulty == "Difficile":
             print("Mode hard")
             if self.turn_count < 8:
-                print("Phase de placement HARD")
-                # Phase de placement : utilise ai_hard pour le placement optimal
-                row, col = ai_hard_minmax(self.board, player_symbol, self.turn_count)
+                row, col = ai_alphabeta(self.board, player_symbol,turn_count=self.turn_count)
                 self.place_piece(row, col)
             else:
-                # Phase de déplacement : utilise ai_hard pour choisir un déplacement optimal
-                print("phase de déplacement HARD :")
-                move = ai_hard_minmax(self.board, player_symbol, self.turn_count)
+                move = ai_alphabeta(self.board, player_symbol,turn_count=self.turn_count)
+                if move and self.board[move[0][0]][move[0][1]] == player_symbol:
+                    self.move_piece(move[0], move[1][0], move[1][1])
+                else:
+                    print("Aucun déplacement possible pour l'IA.")
+        elif self.difficulty == "Moyen":
+            print("Mode moyen")
+            # Appel à la future IA moyen
+            if self.turn_count < 8:
+                row, col = ai_minmax(self.board, player_symbol, self.turn_count)
+                self.place_piece(row, col)
+            else:
+                move = ai_minmax(self.board, player_symbol, self.turn_count)
                 if move and self.board[move[0][0]][move[0][1]] == player_symbol:
                     self.move_piece(move[0], move[1][0], move[1][1])
                 else:
                     print("Aucun déplacement possible pour l'IA.")
         else:
             print("Mode easy")
-            # Mode facile : Utilise ai_easy
             if self.turn_count < 8:
-                # Phase de placement
-                print("Phase de placement EASY")
-                row, col = ai_easy(self.board, player_symbol)
+                row, col = ai_greedy(self.board, player_symbol,turn_count=self.turn_count)
                 self.place_piece(row, col)
             else:
-                # Phase de déplacement
-                print("Phase de déplacement EASY :")
-                for piece in self.player_pieces[player_symbol]:
-                    # Cherche une case adjacente libre pour déplacer le pion
-                    for dr in [-1, 0, 1]:
-                        for dc in [-1, 0, 1]:
-                            if dr == 0 and dc == 0:
-                                continue  # Ignore la position actuelle
-                            new_row, new_col = piece[0] + dr, piece[1] + dc
-                            if 0 <= new_row < BOARD_SIZE and 0 <= new_col < BOARD_SIZE and self.board[new_row][
-                                new_col] == ' ':
-                                self.move_piece(piece, new_row, new_col)
-                                return
+                move = ai_greedy(self.board, player_symbol, turn_count=self.turn_count)
+                if move and self.board[move[0][0]][move[0][1]] == player_symbol:
+                    self.move_piece(move[0], move[1][0], move[1][1])
                 print("Aucun déplacement possible pour l'IA.")
 
     def animate_piece(self, start_pos, end_pos, player_symbol):

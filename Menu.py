@@ -1,3 +1,4 @@
+
 import pygame
 import sys
 
@@ -34,7 +35,10 @@ class TeekoMenu:
         # Boutons
         self.draw_button("Joueur vs Joueur", SCREEN_WIDTH // 2 - 200, 300, 400, 60, "PvP")
         self.draw_button("Joueur vs IA (Facile)", SCREEN_WIDTH // 2 - 200, 400, 400, 60, "AI_Easy")
-        self.draw_button("Joueur vs IA (Difficile)", SCREEN_WIDTH // 2 - 200, 500, 400, 60, "AI_Hard")
+
+        self.draw_button("Joueur vs IA (Moyen)", SCREEN_WIDTH // 2 - 200, 500, 400, 60, "AI_Medium")
+        self.draw_button("Joueur vs IA (Difficile)", SCREEN_WIDTH // 2 - 200, 600, 400, 60, "AI_Hard")
+
 
         pygame.display.flip()
 
@@ -68,6 +72,12 @@ class TeekoMenu:
                 self.mode = "PvAI"
                 self.difficulty = "Facile"
                 self.running = False
+
+            elif action == "AI_Medium":
+                self.mode = "PvAI"
+                self.difficulty = "Moyen"
+                self.running = False
+
             elif action == "AI_Hard":
                 self.mode = "PvAI"
                 self.difficulty = "Difficile"
@@ -87,9 +97,6 @@ class TeekoMenu:
 
             self.draw_menu()
 
+
         return self.mode, self.difficulty
 
-if __name__ == "__main__":
-    menu = TeekoMenu()
-    mode, difficulty = menu.run()
-    print(f"Mode choisi: {mode}, Difficulté: {difficulty}")
